@@ -1402,6 +1402,9 @@ class LSTMLayer(Layer):
     # input from a gate should be mapped with its corresponding
     # parameters. Should 
     def _get_slice_before(self, state_before, fr):
+        # LSTM has 2 states that are passed through time: 
+        # cell and hidden
+
         if fr == 'cell':
             offset = self.n_hids
         elif fr == 'hidden':
