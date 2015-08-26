@@ -1222,11 +1222,13 @@ class LSTMLayer(Layer):
 
         :type n_hids: int
         :param n_hids: Number of hidden units on each layer of the MLP
+        :default 500
 
         :type activation: string/function or list of
         :param activation: Activation function for the embedding layers. If
             a list it needs to have a value for each layer. If not, the same
             activation will be applied to all layers
+        :default tanh
 
         :type scale: float or list of
         :param scale: depending on the initialization function, it can be
@@ -1234,6 +1236,7 @@ class LSTMLayer(Layer):
             are sampled or the largest singular value. If a single value it
             will be used for each layer, otherwise it has to have one value
             for each layer
+        :default 0.01
 
         :type sparsity: int or list of
         :param sparsity: if a single value, it will be used for each layer,
@@ -1241,33 +1244,40 @@ class LSTMLayer(Layer):
             negative, it means the weight matrix is dense. Otherwise it
             means this many randomly selected input units are connected to
             an output unit
+        :default -1
 
         :type weight_noise: bool
         :param weight_noise: If true, the model is used with weight noise
             (and the right shared variable are constructed, to keep track of the
             noise)
+        :default False
 
         :type dropout: float
         :param dropout: the probability with which hidden units are dropped
             from the hidden layer. If set to 1, dropout is not used
+        :default 1.0
 
         :type init_fn: string or function
         :param init_fn: function used to initialize the weights of the
             layer. We recommend using either `sample_weights_classic` or
             `sample_weights` defined in the utils
+        :default sample_weights
 
         :type bias_fn: string or function
         :param bias_fn: function used to initialize the biases. We recommend
             using `init_bias` defined in the utils
+        :default init_bias
 
         :type bias_scale: float
         :param bias_scale: argument passed to `bias_fn`, depicting the scale
             of the initial bias
+        :default 0.0
 
         :type grad_scale: float or theano scalar
         :param grad_scale: factor with which the gradients with respect to
             the parameters of this layer are scaled. It is used for
             differentiating between the different parameters of a model.
+        :default 1.0
 
         :type name: string
         :param name: name of the layer (used to name parameters). NB: in
@@ -1370,7 +1380,7 @@ class LSTMLayer(Layer):
             self.noise_params_shape_fn = [constant_shape(x.get_value().shape)
                             for x in self.noise_params]
 
-    def _get_slice_below(self, state_below, to='cell'):
+    def _get_slice_below(self, state_below, to):
         if to == 'cell':
             offset = 0
         elif to == 'input':
@@ -1388,7 +1398,7 @@ class LSTMLayer(Layer):
             return state_below[:,offset:offset+self.n_hids]
         return state_below[offset:offset+self.n_hids]
 
-    def _get_slice_before(self, state_before, fr='cell'):
+    def _get_slice_before(self, state_before, fr):
         if fr == 'cell':
             offset = self.n_hids
         elif fr == 'hidden':
