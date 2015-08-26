@@ -1398,6 +1398,9 @@ class LSTMLayer(Layer):
             return state_below[:,offset:offset+self.n_hids]
         return state_below[offset:offset+self.n_hids]
 
+    # FIXME this design makes lstm layer barely extensible
+    # input from a gate should be mapped with its corresponding
+    # parameters. Should 
     def _get_slice_before(self, state_before, fr):
         if fr == 'cell':
             offset = self.n_hids
@@ -1422,14 +1425,14 @@ class LSTMLayer(Layer):
 
         :type state_below: theano variable
         :param state_below: the input to the layer
+        :   embeddings of words of the 4 units
 
         :type mask: None or theano variable
         :param mask: mask describing the length of each sequence in a
             minibatch
 
         :type state_before: theano variable
-        :param state_before: the previous value of the hidden state of the
-            layer
+        :param state_before: the previous hidden state of the layer
 
         :type use_noise: bool
         :param use_noise: flag saying if weight noise should be used in
@@ -1525,6 +1528,7 @@ class LSTMLayer(Layer):
             else:
                 init_state = TT.alloc(floatX(0), self.n_hids * 2)
 
+        # step_fprop(state_below, mask, state_before)
         if mask:
             inps = [state_below, mask]
             fn = lambda x,y,z : self.step_fprop(x,y,z, use_noise=use_noise,

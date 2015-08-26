@@ -758,6 +758,7 @@ class Encoder(EncoderDecoderBase):
         for level in range(self.num_levels):
             # Each hidden layer (except the bottom one) receives
             # input, reset and update signals from below.
+
             # FIXME above statement is not correct, should be:
             # each input, reset and update gate,
             # except for those at time 0, 

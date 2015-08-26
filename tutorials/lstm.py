@@ -18,7 +18,10 @@ from groundhog.layers import MultiLayer, \
        Shift, \
        GaussianNoise, \
        SigmoidLayer
-from groundhog.layers import maxpool, \
+from groundhog.layers import 
+        LSTMLayer, \
+        MultiLayer, \
+        maxpool, \
         maxpool_ntimes, \
         last, \
         last_ntimes,\
@@ -85,10 +88,13 @@ def get_text_data(state):
         test_data = None
     return train_data, valid_data, test_data
 
-def create_embedding_layers(state)
+def create_embedding_layers(rng, state)
     # create embedding layers for 4 gates
-    # rank_n_approx determines whether to approximate the
-    # embedding with in a lower dimension
+    # to approximate the embeddings at rank n
+    # first create an embedder from n_in to rank_n_approx
+
+    approx_emb = MultiLayer(
+            rng)
 
     # activation should be x : x
     # because based on GroundHog's design,
@@ -106,13 +112,13 @@ def create_embedding_layers(state)
             activation     : eval(state['emb_activ']),
             init_fn        : 'sample_weights_classic',
 
-            rank_n_approx  : state['rank_n_approx'],
+            rank_n_approx  : state['emb_rank_n_approx'],
 
             scale          : state['emb_sparse'],
-            bias_scale     : eval(state['emb_bias']) 
+            bias_scale     : eval(state['emb_bias_scale']), 
 
-            weight_noise   : state['emb_weight_noise'] 
-            learn_bias     : True,
+            weight_noise   : state['emb_weight_noise'],
+            learn_bias     : True
             }
 
     for level in xrange(state['stack_number']):
@@ -155,12 +161,12 @@ def create_intermediate_layers(state)
             activation     : eval(state['int_activ']),
             init_fn        : 'sample_weights_classic',
 
-            rank_n_approx  : False
+            rank_n_approx  : False,
 
-            weight_noise   : state['weight_noise'],
+            weight_noise   : state['int_weight_noise'],
 
             scale          : state['int_sparse'],
-            bias_scale     : eval(state['int_bias']),
+            bias_scale     : eval(state['int_bias_scale']),
 
             learn_bias     : True
             }
@@ -184,6 +190,36 @@ def create_intermediate_layers(state)
 
     return input_embs, update_embs, forget_embs, output_embs
 
+def create_transition_layers(state):
+    transitions = []
+    for level in xrange(state['stack_number']):
+        self.transitions.append(LSTMLayer(
+            rng,
+            n_hids = state['lstm_nhids'],
+            
+            activation = eval(state['lstm_activ']),
+            init_fn = (state['lstm_weight_init_fn']
+                if not state['lstm_skip_init']
+                else 'sample_zeros'),
+
+            scale = state['lstm_weight_scale'],
+            bias_scale = state['lstm_bias_scale'],
+
+            weight_noise = state['lstm_weight_noise'],
+            dropout = state['lstm_dropout'],
+
+            # LSTM does not use gating and reseting
+            # as GRU does
+            gating = False,
+            reseting = False,
+
+            name = 'transition'
+            ))
+    return transitions
+
+def create_softmax_layer(state):
+    
+
 def jobman(state, channel):
     rng = np.random.RandomState(state['seed'])
 
@@ -201,8 +237,11 @@ def jobman(state, channel):
     h0 = theano.shared(np.zeros((eval(state['nhids'])[-1],), dtype='float32'))
 
     input_embs, update_embs, forget_embs, output_embs = create_embedding_layers(state)
-
     input_ints, update_ints, forget_ints, output_ints = create_intermediate_layers(state)
+    transitions = create_transition_layers(state)
+
+    
+
 
 
 
