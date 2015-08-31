@@ -507,6 +507,7 @@ class ReplicateLayer(Layer):
     def fprop(self, x):
         # This is black magic based on broadcasting,
         # that's why variable names don't make any sense.
+        # copy x n_times times
         a = TT.shape_padleft(x)
         padding = [1] * x.ndim
         b = TT.alloc(numpy.float32(1), self.n_times, *padding)
