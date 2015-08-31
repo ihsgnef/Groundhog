@@ -766,6 +766,7 @@ class Encoder(EncoderDecoderBase):
 
             # All the shapes: (n_words, dim)
             if level > 0:
+                # encoder
                 input_signals[level] += self.inputers[level](hidden_layers[-1])
                 update_signals[level] += self.updaters[level](hidden_layers[-1])
                 reset_signals[level] += self.reseters[level](hidden_layers[-1])
@@ -882,6 +883,7 @@ class Decoder(EncoderDecoderBase):
                 learn_bias=False))
 
         if self.state['decoding_inputs']:
+            # use context from encoder 
             for level in range(self.num_levels):
                 # Input contributions
                 self.decode_inputers[level] = MultiLayer(
@@ -1015,9 +1017,8 @@ class Decoder(EncoderDecoderBase):
             if mode == Decoder.BEAM_SEARCH:
                 assert T == 1
 
-        # For log-likelihood evaluation the representation
-        # be replicated for conveniency. In case backward RNN is used
-        # it is not done.
+        # For log-likelihood evaluation the representation is replicated for conveniency
+        # not when backward RNN is used 
         # Shape if mode == evaluation
         #   (max_seq_len, batch_size, dim)
         # Shape if mode != evaluation
@@ -1082,6 +1083,7 @@ class Decoder(EncoderDecoderBase):
         alignment = TT.zeros((1,))
         for level in range(self.num_levels):
             if level > 0:
+                # decoder
                 input_signals[level] += self.inputers[level](hidden_layers[level - 1])
                 update_signals[level] += self.updaters[level](hidden_layers[level - 1])
                 reset_signals[level] += self.reseters[level](hidden_layers[level - 1])
@@ -1311,13 +1313,13 @@ class RNNEncoderDecoder(object):
         # Annotation for the log-likelihood computation
         training_c_components = []
 
-        logger.debug("Create encoder")
+        logger.debug("Create forward encoder")
         self.encoder = Encoder(self.state, self.rng,
                 prefix="enc",
                 skip_init=self.skip_init)
         self.encoder.create_layers()
 
-        logger.debug("Build encoding computation graph")
+        logger.debug("Build forward encoding computation graph")
         forward_training_c = self.encoder.build_encoder(
                 self.x, self.x_mask,
                 use_noise=True,
