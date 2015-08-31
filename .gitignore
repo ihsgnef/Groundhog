@@ -45,3 +45,4 @@ env
 
 .DS_Store
 rootdir
+*.pyproj
