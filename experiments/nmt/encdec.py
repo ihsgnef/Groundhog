@@ -6,6 +6,7 @@ import itertools
 
 import theano
 import theano.tensor as TT
+from theano import pp
 from theano.ifelse import ifelse
 from theano.sandbox.rng_mrg import MRG_RandomStreams as RandomStreams
 
@@ -806,6 +807,7 @@ class Encoder(EncoderDecoderBase):
             contributions.append(self.repr_contributors[level](
                 LastState()(hidden_layers[level])))
         # I do not know a good starting value for sum
+        # concat all num_levels last hidden layers (after repr_contributors)
         c = self.repr_calculator(sum(contributions[1:], contributions[0]))
         return c
 
@@ -872,9 +874,9 @@ class Decoder(EncoderDecoderBase):
         self.decode_inputers = [lambda x : 0] * self.num_levels
         self.decode_reseters = [lambda x : 0] * self.num_levels
         self.decode_updaters = [lambda x : 0] * self.num_levels
-        self.back_decode_inputers = [lambda x : 0] * self.num_levels
-        self.back_decode_reseters = [lambda x : 0] * self.num_levels
-        self.back_decode_updaters = [lambda x : 0] * self.num_levels
+        # self.back_decode_inputers = [lambda x : 0] * self.num_levels
+        # self.back_decode_reseters = [lambda x : 0] * self.num_levels
+        # self.back_decode_updaters = [lambda x : 0] * self.num_levels
 
         decoding_kwargs = dict(self.default_kwargs)
         decoding_kwargs.update(dict(

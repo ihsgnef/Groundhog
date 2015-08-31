@@ -3,6 +3,6 @@
 - 100 dimension word embedding
 - 500 maxout units each pooling 2 inputs from hidden state in decoder to output
 - weights initialized with zero-mean Gaussian except for the recurrent weights, which are sample by left singular vector matrix of zero-mean Gaussian (Saxe el.al., 2014)
-- 64 random phrase pairs each update
-- Broadcasting provides a means of vectorizing array operations so that looping occurs in C instead of Python.
 - c_dim = number of components * hidden layer size; forward and backward trainings don't interact
+- repr_contributors and maxout layers are very strange
+
