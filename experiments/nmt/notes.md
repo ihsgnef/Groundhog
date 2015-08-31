@@ -1,0 +1,6 @@
+- 15000 most frequent words for both English and French
+- 1000 hidden units
+- 100 dimension word embedding
+- 500 maxout units each pooling 2 inputs from hidden state in decoder to output
+- weights initialized with zero-mean Gaussian except for the recurrent weights, which are sample by left singular vector matrix of zero-mean Gaussian (Saxe el.al., 2014)
+- 64 random phrase pairs each update
