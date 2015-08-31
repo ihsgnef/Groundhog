@@ -44,3 +44,4 @@ nosetests.xml
 env
 
 .DS_Store
+rootdir

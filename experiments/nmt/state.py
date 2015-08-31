@@ -1,7 +1,7 @@
 source = 'en'
 target = 'fr'
 corpus = 'TED2013'
-root = open('rootdir.config').readline().rstrip()
+root = open('rootdir').readline().rstrip()
 datadir = root + corpus + '/' + source + '-' + target + '/'
 
 
