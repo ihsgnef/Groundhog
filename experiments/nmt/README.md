@@ -4,6 +4,8 @@ Neural Machine Translation
 The folder experiments/nmt contains the implementations of RNNencdec and
 RNNsearch translation models used for the paper [1,2]
 
+!()[encdec.jpg]
+
 ####Code Structure
 
 - encdec.py contains the actual models code
