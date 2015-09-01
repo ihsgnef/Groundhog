@@ -952,8 +952,8 @@ class Decoder(EncoderDecoderBase):
             self.output_nonlinearities = [act_layer, drop_layer]
             self.output_layer = eval(softmax_layer)(
                     self.rng,
-                    self.state['dim'] / self.state['maxout_part'],
-                    self.state['n_sym_target'],
+                    n_in = self.state['dim'] / self.state['maxout_part'],
+                    n_out = self.state['n_sym_target'],
                     sparsity=-1,
                     rank_n_approx=self.state['rank_n_approx'],
                     name='{}_deep_softmax'.format(self.prefix),
@@ -963,8 +963,8 @@ class Decoder(EncoderDecoderBase):
             self.output_nonlinearities = []
             self.output_layer = eval(softmax_layer)(
                     self.rng,
-                    self.state['dim'],
-                    self.state['n_sym_target'],
+                    n_in = self.state['dim'],
+                    n_out = self.state['n_sym_target'],
                     sparsity=-1,
                     rank_n_approx=self.state['rank_n_approx'],
                     name='dec_softmax',
@@ -1162,6 +1162,7 @@ class Decoder(EncoderDecoderBase):
             readout += self.hidden_readouts[level](read_from)
         if self.state['bigram']:
             if mode != Decoder.EVALUATION:
+                # state['check_first_word'] should always be true
                 check_first_word = (y > 0
                     if self.state['check_first_word']
                     else TT.ones((y.shape[0]), dtype="float32"))
@@ -1211,9 +1212,13 @@ class Decoder(EncoderDecoderBase):
 
 
     def sampling_step(self, *args):
-        """Implements one step of sampling
+        """
+        Implements one step of sampling
+        """
 
-        Args are necessary since the number (and the order) of arguments can vary"""
+        """
+        Args are necessary since the number (and the order) of arguments can vary
+        """
 
         args = iter(args)
 

@@ -7,6 +7,8 @@ import pprint
 
 import numpy
 
+import groundhog
+
 from groundhog.trainer.SGD_adadelta import SGD as SGD_adadelta
 from groundhog.trainer.SGD import SGD as SGD
 from groundhog.trainer.SGD_momentum import SGD as SGD_momentum
