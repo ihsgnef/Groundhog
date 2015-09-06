@@ -3,11 +3,12 @@
 - 100 dimension word embedding
 - 500 maxout units each pooling 2 inputs from hidden state in decoder to output
 - weights initialized with zero-mean Gaussian except for the recurrent weights, which are sample by left singular vector matrix of zero-mean Gaussian (Saxe el.al., 2014)
+- forward and backward RNNs in parallel for encoder, only last hidden layer of forward training is used in experiments
 - c_dim = number of components * hidden layer size; forward and backward trainings don't interact
-- repr_contributors and maxout layers are very strange
-- forward and backward RNNs in parallel for encoder, but not used in experiments
+- batch size 64
+- when used for scoring phrase pairs, score = -cost
 - tricks
 	- bias
-	- weight noise
+	- weight noise: not used
 	- gradient clipping: cutoff and cutoff_rescale_length
-	- sort sentences on length in minibatch
+	- sort sentences by length in minibatch

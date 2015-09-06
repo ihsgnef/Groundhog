@@ -113,7 +113,7 @@ def main():
         state.update(cPickle.load(src))
     state.update(eval("dict({})".format(args.changes)))
 
-    state['sort_k_batches'] = 1
+    state['sort_k_batches'] = 1 # which means don't sort
     state['shuffle'] = False
     state['use_infinite_loop'] = False
     state['force_enc_repr_cpu'] = False
