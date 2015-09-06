@@ -7,8 +7,14 @@
 - c_dim = number of components * hidden layer size; forward and backward trainings don't interact
 - batch size 64
 - when used for scoring phrase pairs, score = -cost
-- tricks
-	- bias
-	- weight noise: not used
-	- gradient clipping: cutoff and cutoff_rescale_length
-	- sort sentences by length in minibatch
+
+- bias not learned:
+	- encoder
+		- update and reset embedder
+	- decoder
+		- decoding embedders
+		- from decoded context to softmax
+		- from previous word embedding to softmax
+- weight noise: not used
+- gradient clipping: cutoff and cutoff_rescale_length
+- sort sentences by length in minibatch
