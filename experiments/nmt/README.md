@@ -4,7 +4,12 @@ Neural Machine Translation
 The folder experiments/nmt contains the implementations of RNNencdec and
 RNNsearch translation models used for the paper [1,2]
 
+Encoder-decoder structure:
+
 ![](figures/encdec.jpg)
+
+RNNSearch structure:
+![](figures/rnnsearch.jpg)
 
 ####Code Structure
 
