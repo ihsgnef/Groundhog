@@ -41,6 +41,7 @@ nosetests.xml
 *.pkl
 
 *.config
+*.swp
 env
 
 .DS_Store
