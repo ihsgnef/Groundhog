@@ -250,12 +250,21 @@ def prototype_encdec_state():
 
     state = prototype_state()
 
+    '''
     state['target'] = ["/data/lisatmp3/chokyun/mt/vocab.unlimited/bitexts.selected/binarized_text.shuffled.fr.h5"]
     state['source'] = ["/data/lisatmp3/chokyun/mt/vocab.unlimited/bitexts.selected/binarized_text.shuffled.en.h5"]
     state['indx_word'] = "/data/lisatmp3/chokyun/mt/vocab.unlimited/bitexts.selected/ivocab.en.pkl"
     state['indx_word_target'] = "/data/lisatmp3/chokyun/mt/vocab.unlimited/bitexts.selected/ivocab.fr.pkl"
     state['word_indx'] = "/data/lisatmp3/chokyun/mt/vocab.unlimited/bitexts.selected/vocab.en.pkl"
     state['word_indx_trgt'] = "/data/lisatmp3/chokyun/mt/vocab.unlimited/bitexts.selected/vocab.fr.pkl"
+    '''
+    state['target'] = [datadir + target + '.binarized.shuf.h5']
+    state['source'] = [datadir + source + '.binarized.shuf.h5']
+    state['indx_word'] = datadir + source + '.ivocab.pkl'
+    state['indx_word_target'] = datadir + target + '.ivocab.pkl'
+    state['word_indx'] = datadir + source + '.vocab.pkl'
+    state['word_indx_trgt'] = datadir + target + '.vocab.pkl'
+
 
     state['null_sym_source'] = 30000
     state['null_sym_target'] = 30000
