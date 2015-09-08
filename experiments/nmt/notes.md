@@ -20,3 +20,8 @@
 - sort sentences by length in minibatch
 - there should be only one weight matrix from word embedding to each gate, but there are two
 - rank n approx between maxout and softmax
+
+- gradient calculated at cost level automatically by theano tensor: T.grad(cost.mean(), self.params())
+- for character level sampling, change LM_Model
+- sampling: lm_model <- RNNEncoderDecoder.create_sampler <- Decoder.build_sampler
+- gradient: theano.tensor.grads <- cost_layer.get_grads <- basic_layer.train <- RNNEncoderDecoder.buildDecoder <- RNNEncoderDecoder.build (highest level)

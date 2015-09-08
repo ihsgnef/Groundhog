@@ -1,5 +1,5 @@
-source = 'en'
-target = 'fr'
+source = 'fr'
+target = 'en'
 corpus = 'TED2013'
 root = open('rootdir').readline().rstrip()
 datadir = root + corpus + '/' + source + '-' + target + '/'
