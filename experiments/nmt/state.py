@@ -2,7 +2,8 @@ source = 'fr'
 target = 'en'
 corpus = 'bitexts/200k'
 root = open('rootdir').readline().rstrip()
-datadir = root + corpus + '/' + source + '-' + target + '/'
+datadir = root + corpus + '/' + source + '-' + target + '/train/'
+evaldir = root + corpus + '/' + source + '-' + target + '/valid/'
 
 
 def prototype_state():
@@ -15,6 +16,9 @@ def prototype_state():
 
     # ----- DATA -----
     # (all Nones in this section are placeholders for required values)
+
+    state['valid_source'] = [evaldir+ source + '.binarized.shuf.h5']
+    state['valid_target'] = [evaldir+ target + '.binarized.shuf.h5']
 
     # Source sequences (must be singleton list for backward compatibility)
     state['source'] = [datadir + source + '.binarized.shuf.h5']
