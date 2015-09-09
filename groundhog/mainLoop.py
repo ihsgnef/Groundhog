@@ -278,6 +278,7 @@ class MainLoop(object):
         self.train_data.start(self.timings['next_offset']
                 if 'next_offset' in self.timings
                 else -1)
+        # self.valid_data.start(-1)
 
         while (self.step < self.state['loopIters'] and
                last_cost > .1*self.state['minerr'] and

@@ -315,3 +315,10 @@ def prototype_phrase_lstm_state():
     state['prefix'] = 'phrase_lstm_'
 
     return state
+
+if __name__ == '__main__':
+    state = prototype_state()
+    source_file = open(state['source'][0])
+    target_file = open(state['target'][0])
+    valid_source_file = open(state['valid_source'][0])
+    valid_target_file = open(state['valid_target'][0])
