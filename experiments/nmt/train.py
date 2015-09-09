@@ -86,11 +86,11 @@ def main():
     lm_model = enc_dec.create_lm_model()
 
     logger.debug("Load data")
-    train_data = get_batch_iterator(state)
+    train_data, valid_data = get_batch_iterator(state)
     logger.debug("Compile trainer")
     algo = eval(state['algo'])(lm_model, state, train_data)
     logger.debug("Run training")
-    main = MainLoop(train_data, None, None, lm_model, algo, state, None,
+    main = MainLoop(train_data, valid_data, None, lm_model, algo, state, None,
             reset=state['reset'],
             hooks=[RandomSamplePrinter(state, lm_model, train_data)]
                 if state['hookFreq'] >= 0

@@ -194,7 +194,8 @@ def get_batch_iterator(state):
         shuffle=state['shuffle'],
         use_infinite_loop=state['use_infinite_loop'],
         max_len=state['seqlen'])
-    return train_data
+
+    return train_data, valid_data
 
 class RecurrentLayerWithSearch(Layer):
     """A copy of RecurrentLayer from groundhog"""
