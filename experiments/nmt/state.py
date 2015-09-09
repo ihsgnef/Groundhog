@@ -1,6 +1,6 @@
 source = 'fr'
 target = 'en'
-corpus = 'TED2013'
+corpus = 'bitexts/200k'
 root = open('rootdir').readline().rstrip()
 datadir = root + corpus + '/' + source + '-' + target + '/'
 
