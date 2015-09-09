@@ -25,3 +25,4 @@
 - for character level sampling, change LM_Model
 - sampling: lm_model <- RNNEncoderDecoder.create_sampler <- Decoder.build_sampler
 - gradient: theano.tensor.grads <- cost_layer.get_grads <- basic_layer.train <- RNNEncoderDecoder.buildDecoder <- RNNEncoderDecoder.build (highest level)
+- when there is only one GRU (not stacked), the Maxout between encoder hidden and context is not used

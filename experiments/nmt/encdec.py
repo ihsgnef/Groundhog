@@ -184,6 +184,16 @@ def get_batch_iterator(state):
         shuffle=state['shuffle'],
         use_infinite_loop=state['use_infinite_loop'],
         max_len=state['seqlen'])
+
+    valid_data = Iterator(
+        batch_size=int(state['bs']),
+        target_file=state['valid_target'][0],
+        source_file=state['valid_source'][0],
+        can_fit=False,
+        queue_size=1000,
+        shuffle=state['shuffle'],
+        use_infinite_loop=state['use_infinite_loop'],
+        max_len=state['seqlen'])
     return train_data
 
 class RecurrentLayerWithSearch(Layer):

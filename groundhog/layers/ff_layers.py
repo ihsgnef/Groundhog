@@ -250,6 +250,7 @@ class MultiLayer(Layer):
         If the input is ints, we assume is an index, otherwise we assume is
         a set of floats.
         """
+	print self.name
         if self.weight_noise and use_noise and self.noise_params:
             W_ems = [(x+y) for x, y in zip(self.W_ems, self.nW_ems)]
             if not no_noise_bias:
