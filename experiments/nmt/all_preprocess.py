@@ -7,7 +7,7 @@ name = ''
 
 if len(sys.argv) > 1:
     name = sys.argv[1]
-    name = name + '.'
+    # name = name + '.'
 
 cmd = 'perl web-demo/tokenizer.perl -l ' + src + ' < ' + name + src + ' > ' + name + src + '.tok'
 os.system(cmd)
