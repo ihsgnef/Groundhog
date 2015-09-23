@@ -160,35 +160,6 @@ def sample(lm_model, seq, n_samples,
             if verbose:
                 print "{}: {}".format(costs[i], sentences[i])
         return sentences, costs, trans
-    elif sampler:
-        sentences = []
-        all_probs = []
-        costs = []
-
-        values, cond_probs = sampler(n_samples, 3 * (len(seq) - 1), alpha, seq)
-        for sidx in xrange(n_samples):
-            sen = []
-            for k in xrange(values.shape[0]):
-                if lm_model.word_indxs[values[k, sidx]] == '<eol>':
-                    break
-                sen.append(lm_model.word_indxs[values[k, sidx]])
-            sentences.append(" ".join(sen))
-            probs = cond_probs[:, sidx]
-            probs = numpy.array(cond_probs[:len(sen) + 1, sidx])
-            all_probs.append(numpy.exp(-probs))
-            costs.append(-numpy.sum(probs))
-        if normalize:
-            counts = [len(s.strip().split(" ")) for s in sentences]
-            costs = [co / cn for co, cn in zip(costs, counts)]
-        sprobs = numpy.argsort(costs)
-        if verbose:
-            for pidx in sprobs:
-                print "{}: {} {} {}".format(pidx, -costs[pidx], all_probs[pidx], sentences[pidx])
-            print
-        return sentences, costs, None
-    else:
-        raise Exception("I don't know what to do")
-
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -258,7 +229,9 @@ def main():
 
         n_samples = args.beam_size
         total_cost = 0.0
+        args.ignore_unk = True
         logging.debug("Beam size: {}".format(n_samples))
+        logging.debug("Ignore unk: {}".format(args.ignore_unk))
         for i, line in enumerate(fsrc):
             seqin = line.strip()
             seq, parsed_in = parse_input(state, indx_word, seqin, idx2word=idict_src)
@@ -279,25 +252,6 @@ def main():
 
         fsrc.close()
         ftrans.close()
-    else:
-        while True:
-            try:
-                seqin = raw_input('Input Sequence: ')
-                n_samples = int(raw_input('How many samples? '))
-                alpha = None
-                if not args.beam_search:
-                    alpha = float(raw_input('Inverse Temperature? '))
-                seq,parsed_in = parse_input(state, indx_word, seqin, idx2word=idict_src)
-                print "Parsed Input:", parsed_in
-            except Exception:
-                print "Exception while parsing your input:"
-                traceback.print_exc()
-                continue
-
-            sample(lm_model, seq, n_samples, sampler=sampler,
-                    beam_search=beam_search,
-                    ignore_unk=args.ignore_unk, normalize=args.normalize,
-                    alpha=alpha, verbose=True)
 
 if __name__ == "__main__":
     main()

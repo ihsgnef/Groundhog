@@ -48,3 +48,6 @@ env
 rootdir
 *.pyproj
 .idea
+*.txt
+test.en
+test.fr
