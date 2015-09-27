@@ -1,5 +1,5 @@
-source = 'en'
-target = 'ch'
+source = 'fr'
+target = 'en'
 corpus = 'bitexts'
 root = open('rootdir').readline().rstrip()
 datadir = root + corpus + '/' + source + '-' + target + '/train/'
