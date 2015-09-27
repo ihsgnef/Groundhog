@@ -1,6 +1,6 @@
-source = 'en'
-target = 'ch'
-corpus = 'bitexts'
+source = 'fr'
+target = 'en'
+corpus = 'fuel'
 root = open('rootdir').readline().rstrip()
 datadir = root + corpus + '/' + source + '-' + target + '/train/'
 evaldir = root + corpus + '/' + source + '-' + target + '/valid/'
@@ -17,13 +17,13 @@ def prototype_state():
     # ----- DATA -----
     # (all Nones in this section are placeholders for required values)
 
-    state['valid_source'] = [evaldir+ source + '.binarized.shuf.h5']
-    state['valid_target'] = [evaldir+ target + '.binarized.shuf.h5']
+    state['valid_source'] = [evaldir+ source + '.shuf']
+    state['valid_target'] = [evaldir+ target + '.shuf']
 
     # Source sequences (must be singleton list for backward compatibility)
-    state['source'] = [datadir + source + '.binarized.shuf.h5']
+    state['source'] = [datadir + source + '.shuf']
     # Target sequences (must be singleton list for backward compatibility)
-    state['target'] = [datadir + target + '.binarized.shuf.h5']
+    state['target'] = [datadir + target + '.shuf']
     # index -> word dict for the source language
     # inverted vocabulary
     state['indx_word'] = datadir + source + '.ivocab.pkl'
@@ -262,8 +262,8 @@ def prototype_encdec_state():
     state['word_indx'] = "/data/lisatmp3/chokyun/mt/vocab.unlimited/bitexts.selected/vocab.en.pkl"
     state['word_indx_trgt'] = "/data/lisatmp3/chokyun/mt/vocab.unlimited/bitexts.selected/vocab.fr.pkl"
     '''
-    state['target'] = [datadir + target + '.binarized.shuf.h5']
-    state['source'] = [datadir + source + '.binarized.shuf.h5']
+    state['target'] = [datadir + target + '.shuf']
+    state['source'] = [datadir + source + '.shuf']
     state['indx_word'] = datadir + source + '.ivocab.pkl'
     state['indx_word_target'] = datadir + target + '.ivocab.pkl'
     state['word_indx'] = datadir + source + '.vocab.pkl'
