@@ -17,13 +17,13 @@ def prototype_state():
     # ----- DATA -----
     # (all Nones in this section are placeholders for required values)
 
-    state['valid_source'] = [evaldir+ source + '.shuf']
-    state['valid_target'] = [evaldir+ target + '.shuf']
+    state['valid_source'] = [evaldir+ source + '.shuf.h5']
+    state['valid_target'] = [evaldir+ target + '.shuf.h5']
 
     # Source sequences (must be singleton list for backward compatibility)
-    state['source'] = [datadir + source + '.shuf']
+    state['source'] = [datadir + source + '.shuf.h5']
     # Target sequences (must be singleton list for backward compatibility)
-    state['target'] = [datadir + target + '.shuf']
+    state['target'] = [datadir + target + '.shuf.h5']
     # index -> word dict for the source language
     # inverted vocabulary
     state['indx_word'] = datadir + source + '.ivocab.pkl'
@@ -262,8 +262,8 @@ def prototype_encdec_state():
     state['word_indx'] = "/data/lisatmp3/chokyun/mt/vocab.unlimited/bitexts.selected/vocab.en.pkl"
     state['word_indx_trgt'] = "/data/lisatmp3/chokyun/mt/vocab.unlimited/bitexts.selected/vocab.fr.pkl"
     '''
-    state['target'] = [datadir + target + '.shuf']
-    state['source'] = [datadir + source + '.shuf']
+    state['target'] = [datadir + target + '.shuf.h5']
+    state['source'] = [datadir + source + '.shuf.h5']
     state['indx_word'] = datadir + source + '.ivocab.pkl'
     state['indx_word_target'] = datadir + target + '.ivocab.pkl'
     state['word_indx'] = datadir + source + '.vocab.pkl'
