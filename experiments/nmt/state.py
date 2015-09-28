@@ -1,6 +1,10 @@
 source = 'fr'
 target = 'en'
+<<<<<<< HEAD
 corpus = 'bitexts_old'
+=======
+corpus = 'bitexts'
+>>>>>>> 87d7811da5a2d2eacd06c2e3a8dab71b2e20ea29
 root = open('rootdir').readline().rstrip()
 datadir = root + corpus + '/' + source + '-' + target + '/train/'
 evaldir = root + corpus + '/' + source + '-' + target + '/valid/'
