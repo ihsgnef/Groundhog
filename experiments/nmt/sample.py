@@ -46,7 +46,6 @@ class BeamSearch(object):
 
     def search(self, seq, n_samples, ignore_unk=False, minlen=1):
         c = self.comp_repr(seq)[0]
-        print '***************', c
         states = map(lambda x : x[None, :], self.comp_init_states(c))
         dim = states[0].shape[1]
 
@@ -141,11 +140,20 @@ class BeamSearch(object):
         fin_costs = numpy.array(sorted(fin_costs))
         return fin_trans, fin_costs
 
-    def search_with_truth(self, seq, truth, n_samples, ignore_unk=False, minlen=1):
+    def search_with_truth(self, seq, truth, n_samples, ignore_unk=False, minlen=1, idict=None):
+        for ww in truth:
+            print idict[ww],
+        print ''
         c = self.comp_repr(seq)[0]
+        # one representation at each encoding time step
+        # c.shape[0] = len(seq)
+
+        # states is a dim_dimensional vector, output of initialization unit
         states = map(lambda x : x[None, :], self.comp_init_states(c))
+        # dimension of hidden layer
         dim = states[0].shape[1]
 
+        # always 1 in case of non-deep GRU
         num_levels = len(states)
 
         fin_trans = []
@@ -154,8 +162,10 @@ class BeamSearch(object):
         trans = [[]]
         costs = [0.0]
 
+        # maximum translation length allowed is 3*len(source)
         for k in range(3 * len(seq)):
             if n_samples == 0:
+                # all translation ended
                 break
 
             # Compute probabilities of the next words for
@@ -166,10 +176,18 @@ class BeamSearch(object):
                     else numpy.zeros(beam_size, dtype="int64"))
             log_probs = numpy.log(self.comp_next_probs(c, k, last_words, *states)[0])
 
-            if k < len(truth):
-                print str(truth[k]) + '\t',  last_words
+            print str(k) + '\t' + '|', 
+            if k > 0 and k <= len(truth):
+                if truth[k - 1] < 30000:
+                    print idict[truth[k - 1]] + '\t' + '|',
+                else:
+                    print '<EOS>' + '\t',
+                for ww in last_words:
+                    print idict[ww] + ' ',
+                print ''
             else:
                 print last_words
+
 
             # Adjust log probs according to search restrictions
             if ignore_unk:
@@ -192,15 +210,13 @@ class BeamSearch(object):
             # which word?
             word_indices = best_costs_indices % voc_size
             costs = flat_next_costs[best_costs_indices]
-            trans_indices.append(n_samples)
-            word_indices.append()
 
             # Form a beam for the next iteration
-            new_trans = [[]] * (n_samples + 1)
-            new_costs = numpy.zeros(n_samples + 1)
-            new_states = [numpy.zeros((n_samples + 1, dim), dtype="float32") for level
+            new_trans = [[]] * (n_samples)
+            new_costs = numpy.zeros(n_samples)
+            new_states = [numpy.zeros((n_samples, dim), dtype="float32") for level
                     in range(num_levels)]
-            inputs = numpy.zeros(n_samples + 1, dtype="int64")
+            inputs = numpy.zeros(n_samples, dtype="int64")
             for i, (orig_idx, next_word, next_cost) in enumerate(
                     zip(trans_indices, word_indices, costs)):
                 new_trans[i] = trans[orig_idx] + [next_word]
@@ -208,12 +224,6 @@ class BeamSearch(object):
                 for level in range(num_levels):
                     new_states[level][i] = states[level][orig_idx]
                 inputs[i] = next_word
-
-            if k < len(truth):
-                inputs[n_samples] = truth[k]
-            else:
-                inputs[n_samples] = truth[-1]
-            new_costs[n_samples] = 1000
 
             new_states = self.comp_next_states(c, k, inputs, *new_states)
 
@@ -231,9 +241,6 @@ class BeamSearch(object):
                     fin_trans.append(new_trans[i])
                     fin_costs.append(new_costs[i])
 
-            indices.append(n_samples)
-            trans.append(new_trans[n_samples])
-            costs.append(new_costs[n_samples])
             # beam size is naturally reduced when multiple best 
             # new trans came from same beam
             states = map(lambda x : x[indices], new_states)
@@ -242,10 +249,10 @@ class BeamSearch(object):
         if not len(fin_trans):
             if ignore_unk:
                 logger.warning("Did not manage without UNK")
-                return self.search_with_truth(seq, truth, n_samples, False, minlen)
+                return self.search_with_truth(seq, truth, n_samples, False, minlen, idict)
             elif n_samples < 500:
                 logger.warning("Still no translations: try beam size {}".format(n_samples * 2))
-                return self.search_with_truth(seq, truth, n_samples * 2, False, minlen)
+                return self.search_with_truth(seq, truth, n_samples * 2, False, minlen, idict)
             else:
                 logger.error("Translation failed")
 
@@ -264,12 +271,12 @@ def indices_to_words(i2w, seq):
 def sample(lm_model, seq, truth, n_samples,
         sampler=None, beam_search=None,
         ignore_unk=False, normalize=False,
-        alpha=1, verbose=False):
+        alpha=1, verbose=False, idict=None):
 
     if truth is not None and beam_search:
         sentences = []
         trans, costs = beam_search.search_with_truth(seq, truth, n_samples,
-                ignore_unk=ignore_unk, minlen=len(seq) / 2)
+                ignore_unk=ignore_unk, minlen=len(seq) / 2, idict=idict)
         if normalize:
             counts = [len(s) for s in trans]
             costs = [co / cn for co, cn in zip(costs, counts)]
@@ -370,7 +377,8 @@ def main():
     enc_dec.build()
     lm_model = enc_dec.create_lm_model()
     lm_model.load(args.model_path)
-    indx_word = cPickle.load(open(state['word_indx'],'rb'))
+    indx_word_src = cPickle.load(open(state['word_indx'],'rb'))
+    indx_word_trg = cPickle.load(open(state['word_indx_trgt'],'rb'))
 
     sampler = None
     beam_search = None
@@ -400,16 +408,16 @@ def main():
         for srcline, trgline in zip(fsrc, ftrg):
             src_seqin = srcline.strip()
             trg_seqin = trgline.strip()
-            src_seq, src_parsed_in = parse_input(state, indx_word, src_seqin, idx2word=idict_src)
-            trg_seq, trg_parsed_in = parse_input(state, indx_word, trg_seqin, idx2word=idict_src)
+            src_seq, src_parsed_in = parse_input(state, indx_word_src, src_seqin, idx2word=idict_src)
+            trg_seq, trg_parsed_in = parse_input(state, indx_word_trg, trg_seqin, idx2word=idict_trg)
             if args.verbose:
                 print "Parsed Input:", parsed_in
             trans, costs, _ = sample(lm_model, src_seq, trg_seq, n_samples, sampler=sampler,
                     beam_search=beam_search, ignore_unk=args.ignore_unk, 
-                    normalize=args.normalize, verbose=True)
+                    normalize=args.normalize, verbose=True, idict=idict_trg)
             best = numpy.argmin(costs)
-            if args.verbose:
-                print "Translation:", trans[best]
+            # if args.verbose:
+            #     print "Translation:", trans[best]
             total_cost += costs[best]
 
         fsrc.close()

@@ -8,6 +8,8 @@ import os
 
 #cmd = 'python sample.py --source=fr.short --beam-search --beam-size 12 --state models/search_state_fr-en.pkl models/search_model_fr-en.npz 2>>log.txt'
 
-cmd = 'python sample.py --source=fr.short --target=en.short --beam-search --beam-size 12 --state models/search_state_fr-en.pkl models/search_model_fr-en.npz 2>>log.txt'
+#cmd = 'python sample.py --source=fr.short --target=en.short --beam-search --beam-size 30 --state models/search_state_fr-en.pkl models/search_model_fr-en.npz 2>>log.txt'
+
+cmd = 'python iterative_score.py --source=fr.short --target=en.short --state models/search_state_fr-en.pkl models/search_model_fr-en.npz 2>>log.txt'
 
 os.system(cmd)
